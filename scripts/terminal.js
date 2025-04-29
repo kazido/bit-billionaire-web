@@ -2,6 +2,7 @@ const terminal = document.getElementById("terminal");
 const terminalInput = document.getElementById("command-input");
 const terminalLog = document.getElementById("console-log");
 const blurLayer = document.getElementById("blur-layer");
+const scanlinesLayer = document.getElementById("scanlines");
 
 let isTyping = false; // Track if typing is in progress
 
@@ -48,22 +49,22 @@ terminalInput.addEventListener("focus", () => {
 
 // Log to the console. If instant is passed, make it instant
 function logToConsole(text, instant) {
+  text = `\n> ` + text;
   if (isTyping) return; // Prevent multiple logToConsole calls from running simultaneously
   if (!instant) return _logToConsoleAnimated(text); // Log it animated if instant not passed
 
-  terminalLog.innerText += `\n> ${text}`;
+  terminalLog.innerText += `${text}`;
   terminalLog.scrollTop = terminalLog.scrollHeight;
 }
 
 function _logToConsoleAnimated(text) {
   isTyping = true; // Set typing state to true
   let index = 0;
-  terminalLog.innerText += `\n> `;
   function nextCharacter() {
     if (index < text.length) {
       terminalLog.innerText += text[index++];
       terminalLog.scrollTop = terminalLog.scrollHeight; // Keep scroll at the bottom
-      setTimeout(nextCharacter, 50); // Adjust typing speed here
+      setTimeout(nextCharacter, 10); // Adjust typing speed here
     } else {
       isTyping = false; // Reset typing state when done
     }
@@ -74,34 +75,10 @@ function _logToConsoleAnimated(text) {
 // Blur and unblur the background when the terminal gains or loses focus
 terminalInput.onfocus = function () {
   blurLayer.classList.add("blurred");
+  scanlinesLayer.classList.add("hidden");
 };
 
 terminalInput.onblur = function () {
   blurLayer.classList.remove("blurred");
+  scanlinesLayer.classList.remove("hidden");
 };
-
-function handleCommand(cmd) {
-  logToConsole(cmd, true);
-
-  switch (cmd.toLowerCase()) {
-    case "help":
-      logToConsole("Available commands: help, ping, clear");
-      break;
-    case "theme":
-      element = document.body;
-      if (element.classList.toggle("light-mode")) {
-        logToConsole("Set web theme to light mode.");
-      } else {
-        logToConsole("Set web theme to dark mode.");
-      }
-      break;
-    case "set-name":
-      logToConsole();
-      document.getElementById("user-name").textContent = cmd;
-    case "clear":
-      terminalLog.innerText = "";
-      break;
-    default:
-      logToConsole(`Unknown command: "${cmd}"`);
-  }
-}

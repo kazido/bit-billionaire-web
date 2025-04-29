@@ -1,0 +1,12 @@
+#foraging-log {
+    position: relative;
+    background-color: #111;
+    display: flex;
+    font-size: 50px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 0.25s ease-in-out;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.75);
+}
